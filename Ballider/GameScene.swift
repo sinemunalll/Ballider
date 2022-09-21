@@ -14,6 +14,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     var brick = SKSpriteNode()
     var originalPosition : CGPoint?
     
+    var brickWidth = 0
+    var brickHeight = 0
+    
     enum ColliderType : UInt32{
          case Ball = 1
          case Birck = 2
@@ -22,7 +25,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
      
-        
         ball = childNode(withName: "Ball") as! SKSpriteNode
         brick = childNode(withName: "Brick") as! SKSpriteNode
         
@@ -42,31 +44,41 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         ball.physicsBody?.contactTestBitMask = ColliderType.Birck.rawValue
         ball.physicsBody?.categoryBitMask = ColliderType.Birck.rawValue
         ball.physicsBody?.collisionBitMask = ColliderType.Birck.rawValue
-   
      
-        let brickSize = CGSize(width: brickTexture.size().width, height: brickTexture.size().height)
+        brickWidth = Int(brickTexture.size().width)
+        brickHeight = Int(brickTexture.size().height)
+        
+        let brickSize = CGSize(width: brickWidth, height: brickHeight)
         brick.physicsBody = SKPhysicsBody(rectangleOf: brickSize)
         brick.physicsBody?.affectedByGravity = false
         brick.physicsBody?.isDynamic = true
         brick.physicsBody?.allowsRotation = true
         brick.physicsBody?.mass = 0.4
         brick.physicsBody?.collisionBitMask = ColliderType.Ball.rawValue
-       
+        
    
     }
+    
     func didBegin(_ contact: SKPhysicsContact) {
          if contact.bodyA.collisionBitMask == ColliderType.Ball.rawValue || contact.bodyB.collisionBitMask == ColliderType.Ball.rawValue {
              let dx = -((ball.position.x) - originalPosition!.x)
              let dy = -((ball.position.y) - originalPosition!.y)
                                                                
-                let impulse = CGVector(dx: dx, dy: dy)
-                print(impulse)
-                ball.physicsBody?.applyImpulse(impulse)
-                ball.physicsBody?.affectedByGravity = true
+             let impulse = CGVector(dx: dx, dy: dy)
+             ball.physicsBody?.applyImpulse(impulse)
+             ball.physicsBody?.affectedByGravity = true
+             
+             var newBrickWidth = brickWidth
+             brickWidth = brickWidth - 10
+             brickHeight = brickHeight - 10
+             
+             if newBrickWidth > 50 {
+                 brick.size = CGSize(width: brickWidth, height: brickHeight)
+             }
+             
+             
          }
      }
- 
-    
     
     func touchDown(atPoint pos : CGPoint) {
      
@@ -107,8 +119,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                                      if let sprite = node as? SKSpriteNode {
                                          if sprite == brick {
                                              brick.position = CGPoint(x:touchLocation.x, y:brick.position.y)
-                                        
-                                                
                                          }
                                      }
                                  }
