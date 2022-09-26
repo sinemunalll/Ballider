@@ -25,14 +25,29 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
      
+        
+        physicsWorld.contactDelegate = self
         ball = childNode(withName: "Ball") as! SKSpriteNode
         brick = childNode(withName: "Brick") as! SKSpriteNode
+        let width2 =  brick.size.width/2
+        let height2 =  brick.size.height/2
+        let xRange = SKRange(lowerLimit:-(brick.size.width + width2),upperLimit:brick.size.width + width2)
+       
+        let widthBall =  ball.size.width
+        let xRangeBall = SKRange(lowerLimit:-(ball.size.width + widthBall * 2.5),upperLimit:ball.size.width + widthBall * 2.5)
+               
+      
+        brick.constraints = [SKConstraint.positionX(xRange)]
+        ball.constraints = [SKConstraint.positionX(xRangeBall)]
         
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.physicsWorld.contactDelegate = self
         
+        
+        
         let ballTexture  = SKTexture(imageNamed: "Ball")
         let brickTexture  = SKTexture(imageNamed: "Brick")
+     
         
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ballTexture.size().height / 10)
         ball.physicsBody?.affectedByGravity = true
@@ -44,31 +59,37 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         ball.physicsBody?.contactTestBitMask = ColliderType.Birck.rawValue
         ball.physicsBody?.categoryBitMask = ColliderType.Birck.rawValue
         ball.physicsBody?.collisionBitMask = ColliderType.Birck.rawValue
+        
+    
      
         brickWidth = Int(brickTexture.size().width)
         brickHeight = Int(brickTexture.size().height)
         
         let brickSize = CGSize(width: brickWidth, height: brickHeight)
         brick.physicsBody = SKPhysicsBody(rectangleOf: brickSize)
+        
         brick.physicsBody?.affectedByGravity = false
         brick.physicsBody?.isDynamic = true
         brick.physicsBody?.allowsRotation = true
         brick.physicsBody?.mass = 0.4
         brick.physicsBody?.collisionBitMask = ColliderType.Ball.rawValue
-        
+    
    
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
          if contact.bodyA.collisionBitMask == ColliderType.Ball.rawValue || contact.bodyB.collisionBitMask == ColliderType.Ball.rawValue {
-             let dx = -((ball.position.x) - originalPosition!.x)
+             let dx = (CGFloat.random(in: -(ball.size.width)...ball.size.width) - originalPosition!.x)
              let dy = -((ball.position.y) - originalPosition!.y)
+             
+        
+          
                                                                
              let impulse = CGVector(dx: dx, dy: dy)
              ball.physicsBody?.applyImpulse(impulse)
              ball.physicsBody?.affectedByGravity = true
              
-             var newBrickWidth = brickWidth
+             let newBrickWidth = brickWidth
              brickWidth = brickWidth - 10
              brickHeight = brickHeight - 10
              
@@ -94,8 +115,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            let touchLocation = touch.location(in: self) // dokunulan yer
-            let touchNodes = nodes(at: touchLocation) //dokunulan yerdeki node
+            let touchLocation = touch.location(in: self)
+            let touchNodes = nodes(at: touchLocation) 
                 if touchNodes.isEmpty == false {
                     for node in touchNodes {
                         if let sprite = node as? SKSpriteNode {
@@ -110,7 +131,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-                    let touchLocation = touch.location(in: self) // dokunulan yer
+                    let touchLocation = touch.location(in: self)
           
                    let touchNodes = nodes(at: touchLocation) //dokunulan yerdeki node
                            if touchNodes.isEmpty == false {
@@ -119,6 +140,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                                      if let sprite = node as? SKSpriteNode {
                                          if sprite == brick {
                                              brick.position = CGPoint(x:touchLocation.x, y:brick.position.y)
+                                            
                                          }
                                      }
                                  }
