@@ -10,6 +10,7 @@ import GameplayKit
 
 class GameScene: SKScene,SKPhysicsContactDelegate {
     
+    let button = SKSpriteNode(imageNamed: "PlayButton")
     var ball = SKSpriteNode()
     var brick = SKSpriteNode()
     var originalPosition : CGPoint?
@@ -20,6 +21,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var brickWidth = 0
     var brickHeight = 0
+    
+    var gameStarted = false
     
     enum ColliderType : UInt32{
          case Ball = 1
@@ -79,10 +82,19 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         scoreLabel.zPosition = 2
         self.addChild(scoreLabel)
         
+        button.name = "PlayButton"
+        button.size.height = 100
+        button.size.width = 100
+        button.isHidden = true
+        button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 50)
+      
+        self.addChild(button)
+        
    
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
+        gameStarted = true
          if contact.bodyA.collisionBitMask == ColliderType.Ball.rawValue || contact.bodyB.collisionBitMask == ColliderType.Ball.rawValue {
              let dx = (CGFloat.random(in: -(ball.size.width)...ball.size.width) - originalPosition!.x)
              let dy = -((ball.position.y) - originalPosition!.y)
@@ -90,6 +102,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              let impulse = CGVector(dx: dx, dy: dy)
              ball.physicsBody?.applyImpulse(impulse)
              ball.physicsBody?.affectedByGravity = true
+            
              
              let newBrickWidth = brickWidth
              brickWidth = brickWidth - 10
@@ -126,6 +139,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                             if sprite == brick {
                                 brick.position = CGPoint(x:touchLocation.x, y:brick.position.y)
                         }
+                            if sprite == button {
+                                self.loadGameScene()
+                            }
+                        
                     }
                 }
             }
@@ -145,6 +162,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                                              brick.position = CGPoint(x:touchLocation.x, y:brick.position.y)
                                             
                                          }
+                                         if sprite == button {
+                                             self.loadGameScene()
+                                         }
                                      }
                                  }
                              }
@@ -162,5 +182,27 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        if let ballPhysicsBody = ball.physicsBody {
+        
+            if ballPhysicsBody.velocity.dy == 0.0 && gameStarted == true {
+                button.isHidden = false
+                ball.isHidden = true
+            
+                
+            }
+        }
+    }
+    
+    func loadGameScene() {
+        button.isHidden = true
+        ball.physicsBody?.affectedByGravity = true
+        ball.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        ball.physicsBody?.angularVelocity = 0
+        ball.zPosition = 1
+        ball.isHidden = false
+        ball.position = originalPosition!
+        gameStarted = false
+        score = 0
+        scoreLabel.text = String(score)
     }
 }
