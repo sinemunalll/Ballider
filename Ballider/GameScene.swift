@@ -14,6 +14,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     var ball = SKSpriteNode()
     var brick = SKSpriteNode()
     var originalPosition : CGPoint?
+    var brickPosition : CGPoint?
     
     var scoreText = UILabel()
     var scoreLabel = SKLabelNode()
@@ -24,13 +25,19 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var gameStarted = false
     
+    var progressBar = ProgressBar()
+    var progressCount = 0
+    
     enum ColliderType : UInt32{
          case Ball = 1
          case Birck = 2
      }
      
-    
     override func didMove(to view: SKView) {
+        
+        progressBar.getSceneFrame(sceneFrame: frame)
+        progressBar.buildProgressBar()
+        addChild(progressBar)
      
         physicsWorld.contactDelegate = self
         ball = childNode(withName: "Ball") as! SKSpriteNode
@@ -73,6 +80,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         brick.physicsBody?.allowsRotation = true
         brick.physicsBody?.mass = 0.4
         brick.physicsBody?.collisionBitMask = ColliderType.Ball.rawValue
+        brickPosition = brick.position
     
         scoreLabel.fontName = "Helvetica"
         scoreLabel.fontSize = 30
@@ -89,7 +97,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 50)
       
         self.addChild(button)
-        
    
     }
     
@@ -102,7 +109,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              let impulse = CGVector(dx: dx, dy: dy)
              ball.physicsBody?.applyImpulse(impulse)
              ball.physicsBody?.affectedByGravity = true
-            
              
              let newBrickWidth = brickWidth
              brickWidth = brickWidth - 10
@@ -114,6 +120,13 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              score += 1
              scoreLabel.text = String(score)
              
+             
+             if self.progressCount <= 10 {
+                 
+                 self.progressBar.updateProgressBar(updateProgress: 1, updateDurationProgress: 0.1)
+                 
+                 self.progressCount += 1
+             }
          }
      }
     
@@ -153,14 +166,13 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         if let touch = touches.first {
                     let touchLocation = touch.location(in: self)
           
-                   let touchNodes = nodes(at: touchLocation) //dokunulan yerdeki node
+                    let touchNodes = nodes(at: touchLocation) //dokunulan yerdeki node
                            if touchNodes.isEmpty == false {
                                  for node in touchNodes {
                                      
                                      if let sprite = node as? SKSpriteNode {
                                          if sprite == brick {
                                              brick.position = CGPoint(x:touchLocation.x, y:brick.position.y)
-                                            
                                          }
                                          if sprite == button {
                                              self.loadGameScene()
@@ -179,7 +191,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     }
     
-    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         if let ballPhysicsBody = ball.physicsBody {
@@ -187,8 +198,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             if ballPhysicsBody.velocity.dy == 0.0 && gameStarted == true {
                 button.isHidden = false
                 ball.isHidden = true
-            
+                brick.position = brickPosition!
                 
+                self.progressBar.clearProgress(clearCount: 1)
             }
         }
     }
@@ -201,8 +213,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         ball.zPosition = 1
         ball.isHidden = false
         ball.position = originalPosition!
+        ball.zPosition = 4
         gameStarted = false
         score = 0
         scoreLabel.text = String(score)
+        self.progressCount = 0
     }
 }
