@@ -27,7 +27,7 @@ class ProgressBar: SKNode {
     
     func getSceneFrame(sceneFrame: CGRect){
         self.sceneFrame = sceneFrame
-        maxProgressBarWidth = sceneFrame.width * 0.65
+        maxProgressBarWidth = sceneFrame.width * 0.60 //bar uzerindeki ilerleyiş genisligi
     }
     
     func buildProgressBar(){

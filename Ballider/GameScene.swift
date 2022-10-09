@@ -18,7 +18,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var scoreText = UILabel()
     var scoreLabel = SKLabelNode()
+    var highScoreLabel = SKLabelNode()
+    var highScoreText = SKLabelNode(text: "HighScore:")
     var score = 0
+    var highScore = 0
+    
+    var defaults = UserDefaults.standard
     
     var brickWidth = 0
     var brickHeight = 0
@@ -27,6 +32,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var progressBar = ProgressBar()
     var progressCount = 0
+    
+    var lv1 = 10
     
     enum ColliderType : UInt32{
          case Ball = 1
@@ -90,6 +97,23 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         scoreLabel.zPosition = 2
         self.addChild(scoreLabel)
         
+        highScoreLabel.fontName = "Helvetica"
+        highScoreLabel.fontSize = 30
+        highScoreLabel.color = UIColor(named: "black")
+        highScoreLabel.text = "0"
+        highScoreLabel.position = CGPoint(x: 0, y: self.frame.height / 3.3)
+        highScoreLabel.zPosition = 2
+        highScoreLabel.isHidden = true
+        self.addChild(highScoreLabel)
+        
+        highScoreText.fontName = "Helvetica"
+        highScoreText.fontSize = 30
+        highScoreText.color = UIColor(named: "black")
+        highScoreText.position = CGPoint(x: -(self.frame.width / 7.7), y: self.frame.height / 3.3)
+        highScoreText.zPosition = 2
+        highScoreText.isHidden = true
+        self.addChild(highScoreText)
+        
         button.name = "PlayButton"
         button.size.height = 100
         button.size.width = 100
@@ -101,13 +125,11 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
+        self.nextLevel()
         gameStarted = true
          if contact.bodyA.collisionBitMask == ColliderType.Ball.rawValue || contact.bodyB.collisionBitMask == ColliderType.Ball.rawValue {
-             let dx = (CGFloat.random(in: -(ball.size.width)...ball.size.width) - originalPosition!.x)
-             let dy = -((ball.position.y) - originalPosition!.y)
              
-             let impulse = CGVector(dx: dx, dy: dy)
-             ball.physicsBody?.applyImpulse(impulse)
+             ball.physicsBody?.applyImpulse(randomImpulse(dxPosition: -500, dyPosition: 500))
              ball.physicsBody?.affectedByGravity = true
              
              let newBrickWidth = brickWidth
@@ -119,9 +141,16 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              }*/
              score += 1
              scoreLabel.text = String(score)
+             scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)])) //effect scale
              
              
-             if self.progressCount <= 10 {
+             if score > highScore {
+                 highScore = score
+                 defaults.set(highScore, forKey: "highScore")
+                 highScoreLabel.text = defaults.string(forKey: "highScore")
+             }
+             
+            if self.progressCount <= 10 {
                  
                  self.progressBar.updateProgressBar(updateProgress: 1, updateDurationProgress: 0.1)
                  
@@ -129,6 +158,13 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              }
          }
      }
+    
+    func randomImpulse(dxPosition: CGFloat, dyPosition: CGFloat) -> CGVector {
+        let dx = (CGFloat.random(in: -(250)...250) - ball.position.x)
+        let dy = -((ball.position.y) - originalPosition!.y)
+        let impulse = CGVector(dx: dx, dy: dy)
+        return impulse
+    }
     
     func touchDown(atPoint pos : CGPoint) {
      
@@ -200,6 +236,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 ball.isHidden = true
                 brick.position = brickPosition!
                 
+                highScoreLabel.isHidden = false
+                highScoreText.isHidden = false
                 self.progressBar.clearProgress(clearCount: 1)
             }
         }
@@ -208,6 +246,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     func loadGameScene() {
         button.isHidden = true
         ball.physicsBody?.affectedByGravity = true
+        ball.physicsBody?.allowsRotation = false
+        ball.physicsBody?.usesPreciseCollisionDetection = true
+        ball.physicsBody?.restitution = 0.0
+        ball.physicsBody?.friction = 1.0
         ball.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         ball.physicsBody?.angularVelocity = 0
         ball.zPosition = 1
@@ -215,8 +257,19 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         ball.position = originalPosition!
         ball.zPosition = 4
         gameStarted = false
+        highScoreText.isHidden = true
+        highScoreLabel.isHidden = true
+        highScoreLabel.text = defaults.string(forKey: "highScore")
         score = 0
         scoreLabel.text = String(score)
+        scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)]))
         self.progressCount = 0
+    }
+    
+    func nextLevel(){
+        if score == lv1 {
+            self.sceneDidLoad()
+            self.loadGameScene()
+        }
     }
 }
