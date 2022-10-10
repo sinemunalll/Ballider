@@ -19,7 +19,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     var scoreText = UILabel()
     var scoreLabel = SKLabelNode()
     var highScoreLabel = SKLabelNode()
-    var highScoreText = SKLabelNode(text: "HighScore:")
     var score = 0
     var highScore = 0
     
@@ -100,28 +99,42 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         highScoreLabel.fontName = "Helvetica"
         highScoreLabel.fontSize = 30
         highScoreLabel.color = UIColor(named: "black")
-        highScoreLabel.text = "0"
         highScoreLabel.position = CGPoint(x: 0, y: self.frame.height / 3.3)
         highScoreLabel.zPosition = 2
         highScoreLabel.isHidden = true
         self.addChild(highScoreLabel)
         
-        highScoreText.fontName = "Helvetica"
-        highScoreText.fontSize = 30
-        highScoreText.color = UIColor(named: "black")
-        highScoreText.position = CGPoint(x: -(self.frame.width / 7.7), y: self.frame.height / 3.3)
-        highScoreText.zPosition = 2
-        highScoreText.isHidden = true
-        self.addChild(highScoreText)
+    
+        
+        self.storeHighScoreCheck()
+        
+        
         
         button.name = "PlayButton"
         button.size.height = 100
         button.size.width = 100
         button.isHidden = true
+        button.zPosition = 2
         button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 50)
       
         self.addChild(button)
    
+    }
+    
+    func storeHighScoreCheck(){
+      
+        let storedHighScore = UserDefaults.standard.object(forKey: "highScore")
+        
+    
+        if storedHighScore == nil {
+            highScore = 0
+           // highScoreLabel.text = "HighScore : \(self.highScore)"
+        }
+        
+        if let newScore = storedHighScore as? Int {
+            highScore = newScore
+            //highScoreLabel.text = "HighScore : \(self.highScore)"
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -147,7 +160,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              if score > highScore {
                  highScore = score
                  defaults.set(highScore, forKey: "highScore")
-                 highScoreLabel.text = defaults.string(forKey: "highScore")
+                // highScoreLabel.text = "HighScore : \(self.highScore)"
+
              }
              
             if self.progressCount <= 10 {
@@ -235,9 +249,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 button.isHidden = false
                 ball.isHidden = true
                 brick.position = brickPosition!
+                highScoreLabel.text = "HighScore : \(self.highScore)"
                 
                 highScoreLabel.isHidden = false
-                highScoreText.isHidden = false
+            
                 self.progressBar.clearProgress(clearCount: 1)
             }
         }
@@ -257,9 +272,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         ball.position = originalPosition!
         ball.zPosition = 4
         gameStarted = false
-        highScoreText.isHidden = true
-        highScoreLabel.isHidden = true
-        highScoreLabel.text = defaults.string(forKey: "highScore")
+      
+       // highScoreLabel.text = "HighScore : \(self.highScore)"
         score = 0
         scoreLabel.text = String(score)
         scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)]))
@@ -272,4 +286,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             self.loadGameScene()
         }
     }
+    
+    
+
+       
 }
