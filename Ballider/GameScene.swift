@@ -10,7 +10,7 @@ import GameplayKit
 
 class GameScene: SKScene,SKPhysicsContactDelegate {
     
-    let button = SKSpriteNode(imageNamed: "PlayButton")
+    
     var ball = SKSpriteNode()
     var brick = SKSpriteNode()
     var originalPosition : CGPoint?
@@ -19,6 +19,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     var scoreText = UILabel()
     var scoreLabel = Score()
     var highScoreLabel = HighScore()
+    var button = Button()
    
     var score = 0
     var highScore = 0
@@ -54,6 +55,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         highScoreLabel.buildHighScore()
         addChild(highScoreLabel)
         
+        button.getSceneFrame(sceneFrame: frame)
+        addChild(button)
         
         physicsWorld.contactDelegate = self
         ball = childNode(withName: "Ball") as! SKSpriteNode
@@ -100,14 +103,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
         self.storeHighScoreCheck()
  
-        button.name = "PlayButton"
-        button.size.height = 100
-        button.size.width = 100
-        button.isHidden = true
-        button.zPosition = 2
-        button.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 50)
-      
-        self.addChild(button)
+       
    
     }
     
@@ -194,6 +190,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                         }
                             if sprite == button {
                                 self.loadGameScene()
+                                
                             }
                         
                     }
@@ -236,7 +233,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         if let ballPhysicsBody = ball.physicsBody {
         
             if ballPhysicsBody.velocity.dy == 0.0 && gameStarted == true {
-                button.isHidden = false
+                button.hideButton()
                 ball.isHidden = true
                 brick.position = brickPosition!
                 
@@ -249,7 +246,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     }
     
     func loadGameScene() {
-        button.isHidden = true
+        button.showButton()
         ball.physicsBody?.affectedByGravity = true
         ball.physicsBody?.allowsRotation = false
         ball.physicsBody?.usesPreciseCollisionDetection = true
