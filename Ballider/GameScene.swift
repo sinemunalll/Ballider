@@ -17,8 +17,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     var brickPosition : CGPoint?
     
     var scoreText = UILabel()
-    var scoreLabel = SKLabelNode()
-    var highScoreLabel = SKLabelNode()
+    var scoreLabel = Score()
+    var highScoreLabel = HighScore()
+   
     var score = 0
     var highScore = 0
     
@@ -44,7 +45,16 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         progressBar.getSceneFrame(sceneFrame: frame)
         progressBar.buildProgressBar()
         addChild(progressBar)
-     
+        
+        scoreLabel.getSceneFrame(sceneFrame: frame)
+        scoreLabel.buildScore()
+        addChild(scoreLabel)
+        
+        highScoreLabel.getSceneFrame(sceneFrame: frame)
+        highScoreLabel.buildHighScore()
+        addChild(highScoreLabel)
+        
+        
         physicsWorld.contactDelegate = self
         ball = childNode(withName: "Ball") as! SKSpriteNode
         brick = childNode(withName: "Brick") as! SKSpriteNode
@@ -88,28 +98,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         brick.physicsBody?.collisionBitMask = ColliderType.Ball.rawValue
         brickPosition = brick.position
     
-        scoreLabel.fontName = "Helvetica"
-        scoreLabel.fontSize = 30
-        scoreLabel.color = UIColor(named: "black")
-        scoreLabel.text = "0"
-        scoreLabel.position = CGPoint(x: 0, y: self.frame.height / 3)
-        scoreLabel.zPosition = 2
-        self.addChild(scoreLabel)
-        
-        highScoreLabel.fontName = "Helvetica"
-        highScoreLabel.fontSize = 30
-        highScoreLabel.color = UIColor(named: "black")
-        highScoreLabel.position = CGPoint(x: 0, y: self.frame.height / 3.3)
-        highScoreLabel.zPosition = 2
-        highScoreLabel.isHidden = true
-        self.addChild(highScoreLabel)
-        
-    
-        
         self.storeHighScoreCheck()
-        
-        
-        
+ 
         button.name = "PlayButton"
         button.size.height = 100
         button.size.width = 100
@@ -153,7 +143,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                  brick.size = CGSize(width: brickWidth, height: brickHeight)
              }*/
              score += 1
-             scoreLabel.text = String(score)
+             scoreLabel.changeString(score: score)
              scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)])) //effect scale
              
              
@@ -249,9 +239,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 button.isHidden = false
                 ball.isHidden = true
                 brick.position = brickPosition!
-                highScoreLabel.text = "HighScore : \(self.highScore)"
                 
-                highScoreLabel.isHidden = false
+                highScoreLabel.changeString(score: self.highScore)
+                highScoreLabel.changeVisibility(visible: true)
             
                 self.progressBar.clearProgress(clearCount: 1)
             }
@@ -272,12 +262,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         ball.position = originalPosition!
         ball.zPosition = 4
         gameStarted = false
-      
        // highScoreLabel.text = "HighScore : \(self.highScore)"
         score = 0
-        scoreLabel.text = String(score)
+        scoreLabel.changeString(score: score)
         scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)]))
         self.progressCount = 0
+        highScoreLabel.showScore()
     }
     
     func nextLevel(){
@@ -286,8 +276,5 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             self.loadGameScene()
         }
     }
-    
-    
-
        
 }
