@@ -16,14 +16,12 @@ class Ball: SKSpriteNode {
     private var width = CGFloat()
     private var height = CGFloat()
    
-    
     init() {
         super.init(texture: ballTexture, color: SKColor.clear, size: ballTexture.size())
         self.setWidth(width: 65)
         self.setHeight(height: 65)
         self.originalPosition = self.position
         self.physicsBody = SKPhysicsBody(circleOfRadius: ballTexture.size().height / 10)
-      
     }
    
     func setup(){
@@ -42,12 +40,12 @@ class Ball: SKSpriteNode {
         self.isHidden = false
         self.position = self.originalPosition!
         self.zPosition = 4
-      
     }
   
     func getSceneFrame(sceneFrame: CGRect){
         self.sceneFrame = sceneFrame
     }
+    
     func getOriginalPositions() -> (CGPoint) {
         return self.originalPosition!
     }
@@ -55,6 +53,7 @@ class Ball: SKSpriteNode {
     func getWidth()->(CGFloat){
          return self.width
     }
+    
     func setWidth(width :CGFloat){
         self.width = width
     }
@@ -62,22 +61,21 @@ class Ball: SKSpriteNode {
     func getHeight()->(CGFloat){
          return self.height
     }
+    
     func setHeight(height :CGFloat){
          self.height = height
     }
     
     func collider() {
-
         self.physicsBody?.contactTestBitMask = ColliderType.Birck.rawValue
         self.physicsBody?.categoryBitMask = ColliderType.Birck.rawValue
         self.physicsBody?.collisionBitMask = ColliderType.Birck.rawValue
     }
+    
     func constraint() {
         let xRangeBall = SKRange(lowerLimit:-(self.size.width + self.getWidth() * 3.7),upperLimit:self.size.height + self.getWidth() * 3.7)
         self.constraints = [SKConstraint.positionX(xRangeBall)]
      }
-    
-
    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -17,7 +17,6 @@ class HighScore: SKNode{
     }
     
     func buildHighScore(){
-       
         highScoreLabel.fontName = "Helvetica"
         highScoreLabel.fontSize = 30
         highScoreLabel.color = UIColor(named: "black")
@@ -42,7 +41,6 @@ class HighScore: SKNode{
         highScoreLabel.isHidden = true
     }
     
-    
     func getSceneFrame(sceneFrame: CGRect){
         self.sceneFrame = sceneFrame
     }
@@ -50,6 +48,5 @@ class HighScore: SKNode{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
 }

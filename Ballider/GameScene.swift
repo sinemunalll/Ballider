@@ -20,9 +20,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     let ball = Ball()
     let brick = Brick()
     
-    var originalPosition : CGPoint?
-    var brickPosition : CGPoint?
-    
     var scoreText = UILabel()
     var scoreLabel = Score()
     var highScoreLabel = HighScore()
@@ -46,7 +43,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.physicsWorld.contactDelegate = self
-      
         
         ball.getSceneFrame(sceneFrame: frame)
         addChild(ball)
@@ -70,42 +66,27 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         addChild(button)
         
         brick.constraint()
-        ball.constraint()
-        
-    
-     
-      
-        
-        ball.setup()
-        
-        //çarpışma
-        ball.collider()
-    
-        
-      
         brick.setup()
-        print(brick.position)
-        brickPosition = brick.position
-    
+        brick.position = brick.getOriginalPositions()
+        
+        ball.constraint()
+        ball.setup()
+        ball.collider()// carpisma
+        
         self.storeHighScoreCheck()
- 
-       
    
     }
     
     func storeHighScoreCheck(){
       
         let storedHighScore = UserDefaults.standard.object(forKey: "highScore")
-        
     
         if storedHighScore == nil {
             highScore = 0
-        
         }
         
         if let newScore = storedHighScore as? Int {
             highScore = newScore
-    
         }
     }
     
@@ -116,29 +97,21 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              
              ball.physicsBody?.applyImpulse(randomImpulse(dxPosition: -500, dyPosition: 500))
              ball.physicsBody?.affectedByGravity = true
-             
         
              brick.setWidth(width: brick.getWidth() - 10)
              brick.setHeight(height: brick.getHeight() - 10)
            
-             
-         
              score += 1
              scoreLabel.changeString(score: score)
              scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)])) //effect scale
              
-             
              if score > highScore {
                  highScore = score
                  defaults.set(highScore, forKey: "highScore")
-            
-
              }
              
             if self.progressCount <= 10 {
-                 
                  self.progressBar.updateProgressBar(updateProgress: 1, updateDurationProgress: 0.1)
-                 
                  self.progressCount += 1
              }
          }
@@ -175,9 +148,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                         }
                             if sprite == button {
                                 self.loadGameScene()
-                                
                             }
-                        
                     }
                 }
             }
@@ -220,7 +191,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             if ballPhysicsBody.velocity.dy == 0.0 && gameStarted == true {
                 button.hideButton()
                 ball.isHidden = true
-                brick.position = brickPosition!
+                brick.position = brick.getOriginalPositions()
                 
                 highScoreLabel.changeString(score: self.highScore)
                 highScoreLabel.changeVisibility(visible: true)
