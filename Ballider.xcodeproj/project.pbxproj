@@ -20,6 +20,7 @@
 		85F5FF7328D4FCAB00ED85AE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85F5FF7128D4FCAB00ED85AE /* Main.storyboard */; };
 		85F5FF7528D4FCAC00ED85AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85F5FF7428D4FCAC00ED85AE /* Assets.xcassets */; };
 		85F5FF7828D4FCAC00ED85AE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85F5FF7628D4FCAC00ED85AE /* LaunchScreen.storyboard */; };
+		85F6B50A28FC394F009B2B60 /* Brick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F6B50928FC394F009B2B60 /* Brick.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		85F5FF7228D4FCAB00ED85AE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		85F5FF7428D4FCAC00ED85AE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		85F5FF7728D4FCAC00ED85AE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		85F6B50928FC394F009B2B60 /* Brick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Brick.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				356D987828F6D5340064B386 /* Score.swift */,
 				356D987A28F6D5B10064B386 /* HighScore.swift */,
 				356D987C28F6F60D0064B386 /* Button.swift */,
+				85F6B50928FC394F009B2B60 /* Brick.swift */,
 			);
 			path = Ballider;
 			sourceTree = "<group>";
@@ -164,6 +167,7 @@
 				85F5FF7028D4FCAB00ED85AE /* GameViewController.swift in Sources */,
 				356D987D28F6F60D0064B386 /* Button.swift in Sources */,
 				356D987728F6B41E0064B386 /* Ball.swift in Sources */,
+				85F6B50A28FC394F009B2B60 /* Brick.swift in Sources */,
 				3541079628E4679300CCD566 /* ProgressBar.swift in Sources */,
 				356D987928F6D5340064B386 /* Score.swift in Sources */,
 				85F5FF6828D4FCAB00ED85AE /* AppDelegate.swift in Sources */,
@@ -320,8 +324,6 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -349,8 +351,6 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

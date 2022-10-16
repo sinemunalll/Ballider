@@ -1,16 +1,16 @@
 //
-//  Ball.swift
+//  Brick.swift
 //  Ballider
 //
-//  Created by Yemlihan Sapan on 12.10.2022.
+//  Created by Sinem Ünal on 16.10.2022.
 //
 
 import Foundation
 import SpriteKit
 
-class Ball: SKSpriteNode {
+class Brick: SKSpriteNode {
     
-    private let ballTexture = SKTexture(imageNamed: "Ball")
+    private let brickTexture = SKTexture(imageNamed: "Brick")
     private var sceneFrame = CGRect()
     private var originalPosition : CGPoint?
     private var width = CGFloat()
@@ -18,32 +18,30 @@ class Ball: SKSpriteNode {
    
     
     init() {
-        super.init(texture: ballTexture, color: SKColor.clear, size: ballTexture.size())
-        self.setWidth(width: 65)
-        self.setHeight(height: 65)
+        super.init(texture: brickTexture, color: SKColor.clear, size: brickTexture.size())
+        self.setWidth(width: 100)
+        self.setHeight(height: 100)
         self.originalPosition = self.position
-        self.physicsBody = SKPhysicsBody(circleOfRadius: ballTexture.size().height / 10)
+        self.size = CGSize(width: getWidth(), height: getHeight())
+        self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
+
+
       
     }
    
     func setup(){
-        self.size.width = self.width
-        self.size.height = self.height
-        self.physicsBody?.affectedByGravity = true
+        self.position = CGRect(x: self.size.width / 2.2 , y: 0, width: getWidth(), height: getHeight())
+        self.physicsBody?.affectedByGravity = false
         self.physicsBody?.isDynamic = true
-        self.physicsBody?.mass = 0.25
-        self.physicsBody?.allowsRotation = false
-        self.physicsBody?.usesPreciseCollisionDetection = true
-        self.physicsBody?.restitution = 0.0
-        self.physicsBody?.friction = 1.0
-        self.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        self.physicsBody?.angularVelocity = 0
-        self.zPosition = 1
-        self.isHidden = false
+        self.physicsBody?.allowsRotation = true
+        self.physicsBody?.mass = 0.4
+        self.physicsBody?.collisionBitMask = ColliderType.Ball.rawValue
         self.position = self.originalPosition!
-        self.zPosition = 4
-      
+
+
+        
     }
+  
   
     func getSceneFrame(sceneFrame: CGRect){
         self.sceneFrame = sceneFrame
@@ -73,8 +71,8 @@ class Ball: SKSpriteNode {
         self.physicsBody?.collisionBitMask = ColliderType.Birck.rawValue
     }
     func constraint() {
-        let xRangeBall = SKRange(lowerLimit:-(self.size.width + self.getWidth() * 3.7),upperLimit:self.size.height + self.getWidth() * 3.7)
-        self.constraints = [SKConstraint.positionX(xRangeBall)]
+        let xRange = SKRange(lowerLimit:-(self.size.width + self.size.width/2 * 1.3),upperLimit:self.size.width  +  self.size.width/2 * 1.3)
+        self.constraints =  [SKConstraint.positionX(xRange)]
      }
     
 
@@ -84,4 +82,3 @@ class Ball: SKSpriteNode {
     }
     
 }
-

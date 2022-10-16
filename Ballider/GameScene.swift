@@ -18,7 +18,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     
     let ball = Ball()
-    var brick = SKSpriteNode()
+    let brick = Brick()
+    
     var originalPosition : CGPoint?
     var brickPosition : CGPoint?
     
@@ -32,8 +33,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var defaults = UserDefaults.standard
     
-    var brickWidth = 0
-    var brickHeight = 0
     
     var gameStarted = false
     
@@ -45,8 +44,15 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
   
     override func didMove(to view: SKView) {
         
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
+        self.physicsWorld.contactDelegate = self
+      
+        
         ball.getSceneFrame(sceneFrame: frame)
         addChild(ball)
+        
+        brick.getSceneFrame(sceneFrame: frame)
+        addChild(brick)
         
         progressBar.getSceneFrame(sceneFrame: frame)
         progressBar.buildProgressBar()
@@ -63,45 +69,22 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         button.getSceneFrame(sceneFrame: frame)
         addChild(button)
         
-
+        brick.constraint()
+        ball.constraint()
         
-        physicsWorld.contactDelegate = self
     
-        brick = childNode(withName: "Brick") as! SKSpriteNode
-        let width2 =  brick.size.width/2
-        let height2 =  brick.size.height/2
-        let xRange = SKRange(lowerLimit:-(brick.size.width + width2 * 1.3),upperLimit:brick.size.width + width2 * 1.3)
-        brick.constraints = [SKConstraint.positionX(xRange)]
-        
-        let widthBall =  ball.width
-        let xRangeBall = SKRange(lowerLimit:-(ball.size.width + widthBall * 2.6),upperLimit:ball.size.width + widthBall * 2.6)
-        ball.constraints = [SKConstraint.positionX(xRangeBall)]
-        
-        self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
-        self.physicsWorld.contactDelegate = self
-        
-      
-        let brickTexture  = SKTexture(imageNamed: "Brick")
      
       
         
-        ball.setupBall()
+        ball.setup()
         
         //çarpışma
-        ball.colliderBall()
+        ball.collider()
     
         
-        brickWidth = Int(brickTexture.size().width)
-        brickHeight = Int(brickTexture.size().height)
-        
-        let brickSize = CGSize(width: brickWidth, height: brickHeight)
-        brick.physicsBody = SKPhysicsBody(rectangleOf: brickSize)
-        
-        brick.physicsBody?.affectedByGravity = false
-        brick.physicsBody?.isDynamic = true
-        brick.physicsBody?.allowsRotation = true
-        brick.physicsBody?.mass = 0.4
-        brick.physicsBody?.collisionBitMask = ColliderType.Ball.rawValue
+      
+        brick.setup()
+        print(brick.position)
         brickPosition = brick.position
     
         self.storeHighScoreCheck()
@@ -117,12 +100,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
         if storedHighScore == nil {
             highScore = 0
-           // highScoreLabel.text = "HighScore : \(self.highScore)"
+        
         }
         
         if let newScore = storedHighScore as? Int {
             highScore = newScore
-            //highScoreLabel.text = "HighScore : \(self.highScore)"
+    
         }
     }
     
@@ -134,13 +117,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              ball.physicsBody?.applyImpulse(randomImpulse(dxPosition: -500, dyPosition: 500))
              ball.physicsBody?.affectedByGravity = true
              
-             let newBrickWidth = brickWidth
-             brickWidth = brickWidth - 10
-             brickHeight = brickHeight - 10
+        
+             brick.setWidth(width: brick.getWidth() - 10)
+             brick.setHeight(height: brick.getHeight() - 10)
+           
              
-            /* if newBrickWidth > 50 {
-                 brick.size = CGSize(width: brickWidth, height: brickHeight)
-             }*/
+         
              score += 1
              scoreLabel.changeString(score: score)
              scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)])) //effect scale
@@ -149,7 +131,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
              if score > highScore {
                  highScore = score
                  defaults.set(highScore, forKey: "highScore")
-                // highScoreLabel.text = "HighScore : \(self.highScore)"
+            
 
              }
              
@@ -250,7 +232,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     func loadGameScene() {
         button.showButton()
-        ball.reload()
+        ball.setup()
         gameStarted = false
         score = 0
         scoreLabel.changeString(score: score)
