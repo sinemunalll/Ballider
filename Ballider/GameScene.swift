@@ -8,10 +8,16 @@
 import SpriteKit
 import GameplayKit
 
+enum ColliderType : UInt32{
+     case Ball = 1
+     case Birck = 2
+ }
+ 
+
 class GameScene: SKScene,SKPhysicsContactDelegate {
     
     
-    var ball = SKSpriteNode()
+    let ball = Ball()
     var brick = SKSpriteNode()
     var originalPosition : CGPoint?
     var brickPosition : CGPoint?
@@ -36,12 +42,11 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var lv1 = 10
     
-    enum ColliderType : UInt32{
-         case Ball = 1
-         case Birck = 2
-     }
-     
+  
     override func didMove(to view: SKView) {
+        
+        ball.getSceneFrame(sceneFrame: frame)
+        addChild(ball)
         
         progressBar.getSceneFrame(sceneFrame: frame)
         progressBar.buildProgressBar()
@@ -58,35 +63,33 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         button.getSceneFrame(sceneFrame: frame)
         addChild(button)
         
+
+        
         physicsWorld.contactDelegate = self
-        ball = childNode(withName: "Ball") as! SKSpriteNode
+    
         brick = childNode(withName: "Brick") as! SKSpriteNode
         let width2 =  brick.size.width/2
         let height2 =  brick.size.height/2
         let xRange = SKRange(lowerLimit:-(brick.size.width + width2 * 1.3),upperLimit:brick.size.width + width2 * 1.3)
-       
-        let widthBall =  ball.size.width
-        let xRangeBall = SKRange(lowerLimit:-(ball.size.width + widthBall * 2.6),upperLimit:ball.size.width + widthBall * 2.6)
-               
         brick.constraints = [SKConstraint.positionX(xRange)]
+        
+        let widthBall =  ball.width
+        let xRangeBall = SKRange(lowerLimit:-(ball.size.width + widthBall * 2.6),upperLimit:ball.size.width + widthBall * 2.6)
         ball.constraints = [SKConstraint.positionX(xRangeBall)]
         
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.physicsWorld.contactDelegate = self
         
-        let ballTexture  = SKTexture(imageNamed: "Ball")
+      
         let brickTexture  = SKTexture(imageNamed: "Brick")
      
-        ball.physicsBody = SKPhysicsBody(circleOfRadius: ballTexture.size().height / 10)
-        ball.physicsBody?.affectedByGravity = true
-        ball.physicsBody?.isDynamic = true
-        ball.physicsBody?.mass = 0.25
-        originalPosition = ball.position
+      
+        
+        ball.setupBall()
         
         //çarpışma
-        ball.physicsBody?.contactTestBitMask = ColliderType.Birck.rawValue
-        ball.physicsBody?.categoryBitMask = ColliderType.Birck.rawValue
-        ball.physicsBody?.collisionBitMask = ColliderType.Birck.rawValue
+        ball.colliderBall()
+    
         
         brickWidth = Int(brickTexture.size().width)
         brickHeight = Int(brickTexture.size().height)
@@ -161,7 +164,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     func randomImpulse(dxPosition: CGFloat, dyPosition: CGFloat) -> CGVector {
         let dx = (CGFloat.random(in: -(250)...250) - ball.position.x)
-        let dy = -((ball.position.y) - originalPosition!.y)
+        let dy = -((ball.position.y) - ball.getOriginalPositions().y)
         let impulse = CGVector(dx: dx, dy: dy)
         return impulse
     }
@@ -247,19 +250,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     func loadGameScene() {
         button.showButton()
-        ball.physicsBody?.affectedByGravity = true
-        ball.physicsBody?.allowsRotation = false
-        ball.physicsBody?.usesPreciseCollisionDetection = true
-        ball.physicsBody?.restitution = 0.0
-        ball.physicsBody?.friction = 1.0
-        ball.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        ball.physicsBody?.angularVelocity = 0
-        ball.zPosition = 1
-        ball.isHidden = false
-        ball.position = originalPosition!
-        ball.zPosition = 4
+        ball.reload()
         gameStarted = false
-       // highScoreLabel.text = "HighScore : \(self.highScore)"
         score = 0
         scoreLabel.changeString(score: score)
         scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)]))
