@@ -22,7 +22,7 @@ class Button: SKSpriteNode{
         self.size.width = 100
         self.isHidden = true
         self.zPosition = 2
-        self.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 50)
+        self.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
     }
     
     func changeVisibility(visible: Bool){

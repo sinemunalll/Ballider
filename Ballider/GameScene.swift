@@ -20,6 +20,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     let ball = Ball()
     let brick = Brick()
+    let gameStartEndBackground = GameStartEndBackground()
+    let voice = Voice()
     
     var scoreText = UILabel()
     var scoreLabel = Score()
@@ -47,6 +49,13 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.physicsWorld.contactDelegate = self
+        
+        gameStartEndBackground.getSceneFrame(sceneFrame: frame)
+        addChild(gameStartEndBackground)
+        
+        voice.getSceneFrame(sceneFrame: frame)
+        voice.buildVoice()
+        addChild(voice)
         
         ball.getSceneFrame(sceneFrame: frame)
         addChild(ball)
@@ -126,7 +135,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     
     public func updateProgressBar(){
-        
         self.progressBar.updateProgressBar(updateProgress: 1, updateDurationProgress: 0.1)
         self.progressCount += 1
     }
@@ -155,6 +163,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         
             if ballPhysicsBody.velocity.dy == 0.0 && gameStarted == true {
                 button.hideButton()
+                voice.hideVoice()
+                gameStartEndBackground.hideGameStartEndBg()
                 ball.isHidden = true
                 brick.position = brick.getOriginalPositions()
                 
@@ -168,6 +178,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     func loadGameScene() {
         button.showButton()
+        voice.showVoice()
+        gameStartEndBackground.isHidden = false
+        gameStartEndBackground.showGameStartEndBg()
         ball.setup()
         gameStarted = false
         score = 0
@@ -193,13 +206,19 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                         if let sprite = node as? SKSpriteNode {
                             if sprite == brick {
                                 brick.position = CGPoint(x:touchLocation.x, y:brick.position.y)
-                        }
+                            }
                             if sprite == button {
                                 self.loadGameScene()
                             }
+                        }
+                        if let sprinteNode = node as? SKNode {
+                            if sprinteNode == voice {
+                                voice.changeVoice()
+                                voice.buildVoice()
+                            }
+                        }
                     }
                 }
-            }
         }
     }
        
