@@ -214,7 +214,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                         if let sprinteNode = node as? SKNode {
                             if sprinteNode == voice {
                                 voice.changeVoice()
-                                voice.buildVoice()
                             }
                         }
                     }
