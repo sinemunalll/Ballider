@@ -18,10 +18,10 @@ class Button: SKSpriteNode{
     override init(texture: SKTexture?, color: UIColor, size: CGSize) {
         super.init(texture: buttonTexture, color: UIColor.clear, size: buttonTexture.size())
         self.name = "PlayButton"
-        self.size.height = 100
-        self.size.width = 100
-        self.isHidden = true
-        self.zPosition = 2
+        self.size.height = 200
+        self.size.width = 400
+        self.isHidden = false
+        self.zPosition = 5
         self.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
     }
     

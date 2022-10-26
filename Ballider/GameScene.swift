@@ -162,9 +162,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         if let ballPhysicsBody = ball.physicsBody {
         
             if ballPhysicsBody.velocity.dy == 0.0 && gameStarted == true {
-                button.hideButton()
-                voice.hideVoice()
-                gameStartEndBackground.hideGameStartEndBg()
+                button.isHidden = false
+                voice.isHidden = false
+                gameStartEndBackground.isHidden = false
                 ball.isHidden = true
                 brick.position = brick.getOriginalPositions()
                 
@@ -172,6 +172,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 highScoreLabel.changeVisibility(visible: true)
             
                 self.progressBar.clearProgress(clearCount: 1)
+                scoreLabel.setPosition(x: 0, y: 450)
             }
         }
     }
@@ -179,11 +180,11 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     func loadGameScene() {
         button.showButton()
         voice.showVoice()
-        gameStartEndBackground.isHidden = false
-        gameStartEndBackground.showGameStartEndBg()
+        gameStartEndBackground.isHidden = true
+        ball.setGravity(gravity: true)
         ball.setup()
         gameStarted = false
-        score = 0
+        //score = 0
         scoreLabel.changeString(score: score)
         scoreLabel.run(.sequence([.scale(to: 1.3, duration: 0.1),.scale(to: 1.0, duration: 0.1)]))
         self.progressCount = 0

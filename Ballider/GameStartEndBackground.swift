@@ -17,9 +17,8 @@ class GameStartEndBackground: SKSpriteNode {
     private var height = CGFloat()
     
     init() {
-        super.init(texture: gameStartEndBackgroundTexture, color: SKColor.clear, size: CGSize(width: 550, height: 550))
+        super.init(texture: gameStartEndBackgroundTexture, color: SKColor.clear, size: CGSize(width: 10000, height: 10000))
         self.position = CGPoint(x: 0, y: 100)
-        self.isHidden = true
     }
     
     func buildGameStartEndBackground(){

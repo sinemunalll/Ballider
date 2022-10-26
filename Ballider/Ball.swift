@@ -15,19 +15,21 @@ class Ball: SKSpriteNode {
     private var originalPosition : CGPoint?
     private var width = CGFloat()
     private var height = CGFloat()
+    private var gravitiy : Bool?
    
     init() {
         super.init(texture: ballTexture, color: SKColor.clear, size: ballTexture.size())
         self.setWidth(width: 65)
         self.setHeight(height: 65)
         self.originalPosition = self.position
+        self.gravitiy = false
         self.physicsBody = SKPhysicsBody(circleOfRadius: ballTexture.size().height / 10)
     }
    
     func setup(){
         self.size.width = self.width
         self.size.height = self.height
-        self.physicsBody?.affectedByGravity = true
+        self.physicsBody?.affectedByGravity = self.gravitiy!
         self.physicsBody?.isDynamic = true
         self.physicsBody?.mass = 0.25
         self.physicsBody?.allowsRotation = false
@@ -64,6 +66,14 @@ class Ball: SKSpriteNode {
     
     func setHeight(height :CGFloat){
          self.height = height
+    }
+    
+    func getGravity()->(Bool){
+         return self.gravitiy!
+    }
+    
+    func setGravity(gravity :Bool){
+         self.gravitiy = gravity
     }
     
     func collider() {
